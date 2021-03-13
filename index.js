@@ -4,7 +4,6 @@ const client = new discord.Client();
 const config = require('./config.json');
 const initalizeCommands = require('./functions/initalizeCommands');
 const addOrUpdate = require('./functions/addOrUpdateBirthday')
-const newServer = require('./functions/newServer')
 const updateServerConfig = require('./functions/updateServerConfig')
 
 
@@ -12,25 +11,16 @@ const updateServerConfig = require('./functions/updateServerConfig')
 
 client.on('ready', () => {
     console.log('client is ready')
-    //initalizeCommands(client)
+    initalizeCommands(client)
 
     client.ws.on('INTERACTION_CREATE', async interaction => {
         const command = interaction.data.name.toLowerCase();
         const args = interaction.data.options;
         const user = `${interaction.member.user.username}#${interaction.member.user.discriminator}`
-        console.log(interaction.data)
+        //console.log(interaction.data)
         try {
             if(command === 'configure') {
-                updateServerConfig(interaction)
-                client.api.interactions(interaction.id, interaction.token).callback.post({
-                    data: {
-                        type: 2,
-                        data: {
-                            flags: 1 << 6,
-                            content: `Success, you have configured <#${interaction.data.options[0].value}> to be the birthday channel, run this command again to reconfigure`,
-                        },
-                    }
-                });
+                updateServerConfig(interaction, client)
             }
         } catch (error) {
 	         //logger.error(error);
