@@ -1,0 +1,19 @@
+{
+  "name": "birthdaybot",
+  "version": "1.0.0",
+  "description": "A bot to keep track of birthdays on discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "birthdaybot"
+  },
+  "author": "DyDestroyer#1027",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "sqlite3": "^5.0.2"
+  }
+}
