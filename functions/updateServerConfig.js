@@ -1,6 +1,7 @@
 const { Database } = require('sqlite3');
 const sqlite3 = require('sqlite3').verbose();
 const newServer = require('./newServer')
+const { Permissions } = require('discord.js');
 /*let db = new sqlite3.Database('./databases/serverConfig.db', (err) => {
   if (err) {
     console.error(err.message);
@@ -18,8 +19,10 @@ module.exports = function updateServerConfig(interaction, client) {
     //console.log(interaction)
     var server_id = interaction.guild_id
     var output_channel_id = interaction.data.options[0].value
-    //console.log(`Server ID: ${server_id}\nOutput channel ID: ${output_channel_id}`)
-    db.serialize(() => {
+    var permissionInteger = interaction.member.permissions
+    var userPermissions = new Permissions(permissionInteger)
+    if(userPermissions.any("MANAGE_GUILD")) {
+      db.serialize(() => {
         db.all(`SELECT server_id, output_channel_id, rowid FROM serverconfig WHERE server_id = ${server_id}`, [], (err, rows) => {
             if (err) {
               throw err;
@@ -61,4 +64,16 @@ module.exports = function updateServerConfig(interaction, client) {
             }
         });
     });
+  }
+  else {
+    client.api.interactions(interaction.id, interaction.token).callback.post({
+      data: {
+          type: 2,
+          data: {
+              flags: 1 << 6,
+              content: `It appears you do not have the manage server permission. If you are a server admin, please apply it to yourself.`,
+          },
+      }
+  });
+  }
 }
