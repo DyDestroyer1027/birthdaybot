@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
-module.exports = function addBirthday(interaction, client) {
+module.exports = function addBirthday(interaction, client, logger) {
     let db = new sqlite3.Database('./databases/birthdays.db', (err) => {
         if (err) {
           console.error(err.message);
