@@ -19,8 +19,7 @@ module.exports = function updateServerConfig(interaction, client) {
     //console.log(interaction)
     var server_id = interaction.guild_id
     var output_channel_id = interaction.data.options[0].value
-    var permissionInteger = interaction.member.permissions
-    var userPermissions = new Permissions(permissionInteger)
+    var userPermissions = new Permissions(parseInt(interaction.member.permissions, 10))
     if(userPermissions.any("MANAGE_GUILD")) {
       db.serialize(() => {
         db.all(`SELECT server_id, output_channel_id, rowid FROM serverconfig WHERE server_id = ${server_id}`, [], (err, rows) => {
@@ -40,7 +39,6 @@ module.exports = function updateServerConfig(interaction, client) {
                   data: {
                       type: 2,
                       data: {
-                          flags: 1 << 6,
                           content: `Success, you have configured <#${interaction.data.options[0].value}> to be the birthday channel, run this command again to reconfigure`,
                       },
                   }

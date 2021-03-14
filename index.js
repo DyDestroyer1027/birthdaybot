@@ -13,7 +13,7 @@ const checkBirthdays = require('./functions/checkBirthdays');
 
 client.on('ready', () => {
     console.log('client is ready')
-    //initalizeCommands(client)
+    initalizeCommands(client)
     checkBirthdays(client)
 
     //Timing setup

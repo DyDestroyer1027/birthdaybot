@@ -12,14 +12,6 @@ module.exports = function newServer(interaction, client) {
         }
         console.log('Connected to the birthday database.');
     });
-    /*
-    CREATE TABLE [IF NOT EXISTS] [schema_name].table_name (
-	column_1 data_type PRIMARY KEY,
-   	column_2 data_type NOT NULL,
-	column_3 data_type DEFAULT 0,
-	table_constraints
-)
-    */
     //console.log(interaction)
     var server_id = interaction.guild_id
     var output_channel_id = interaction.data.options[0].value
