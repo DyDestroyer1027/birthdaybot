@@ -7,26 +7,36 @@ const addOrUpdate = require('./functions/addOrUpdateBirthday')
 const updateServerConfig = require('./functions/updateServerConfig');
 const addOrUpdateBirthday = require('./functions/addOrUpdateBirthday');
 const checkBirthdays = require('./functions/checkBirthdays');
-
+const bunyan = require('bunyan');
+const {LoggingBunyan} = require('@google-cloud/logging-bunyan');
+const loggingBunyan = new LoggingBunyan();
+const logger = bunyan.createLogger({
+  name: 'slashcommands',
+  streams: [
+    {stream: process.stdout, level: 'info'},
+    loggingBunyan.stream('info'),
+  ],
+});
 
 
 
 client.on('ready', () => {
-    console.log('client is ready')
-    initalizeCommands(client)
-    checkBirthdays(client)
+    logger.info('client is ready')
+    //initalizeCommands(client)
+    checkBirthdays(client, logger)
 
     //Timing setup
+    setTimeout(checkBirthdays(client, logger), 86400000) //checks every 24 hours
     client.ws.on('INTERACTION_CREATE', async interaction => {
         const command = interaction.data.name.toLowerCase();
         const args = interaction.data.options;
         const user = `${interaction.member.user.username}#${interaction.member.user.discriminator}`
         try {
             if(command === 'configure') {
-                updateServerConfig(interaction, client)
+                updateServerConfig(interaction, client, logger)
             }
             else if(command === 'addedit') {
-                addOrUpdate(interaction, client)
+                addOrUpdate(interaction, client, logger)
             }
         } 
         catch (error) {
@@ -36,4 +46,4 @@ client.on('ready', () => {
     });
 });
 client.login(config.token);
-console.log('client has logged in')
+logger.info('client has logged in')

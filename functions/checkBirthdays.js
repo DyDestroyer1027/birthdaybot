@@ -1,23 +1,22 @@
 const sqlite3 = require('sqlite3').verbose();
 const discord = require('discord.js');
-module.exports = function checkBirthdays(client) {
+module.exports = function checkBirthdays(client, logger) {
     let birthdayDB = new sqlite3.Database('./databases/birthdays.db', (err) => {
         if (err) {
-          console.error(err.message);
+          logger.error(err.message);
         }
         else {
-          console.log('Connected to the birthday database.');
+          logger.info('Connected to the birthday database. Source: checkbirthdays.js');
         }
     });
     let serverDB = new sqlite3.Database('./databases/serverConfig.db', (err) => {
         if (err) {
-          console.error(err.message);
+          logger.error(err.message);
         }
         else {
-          console.log('Connected to the server config database.');
+          logger.info('Connected to the server config database. Source: checkbirthdays.js');
         }
     });
-    var server = ''
     var currentDay = new Date();
     birthdayDB.serialize(() => {
         birthdayDB.all(`SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite%_'`, (err, servers) => {
@@ -25,12 +24,9 @@ module.exports = function checkBirthdays(client) {
               throw err;
             }
             servers.forEach((server) => {
-                console.log(server.name);
                 birthdayDB.all(`SELECT user_id FROM '${server.name}' WHERE birth_month = '${currentDay.getMonth() + 1}' AND birth_day = '${currentDay.getDate()}'`, (err, users) => {
                     users.forEach((user) => {
-                        console.log(user.user_id)
                         serverDB.all(`SELECT output_channel_id FROM serverconfig WHERE server_id = '${server.name}'`, (err, row) => {
-                            console.log(row[0].output_channel_id)
                             if (err) {
                                 throw err;
                             }

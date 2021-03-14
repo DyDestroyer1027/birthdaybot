@@ -1,7 +1,7 @@
 const config = require('./../config.json')
 const guildID = config.guildID
 module.exports = async function initalizeCommands(client) {
-    client.api.applications(client.user.id).guilds(guildID).commands.post({
+    client.api.applications(client.user.id).commands.post({
         data: {
             name: "addEdit",
             description: "Adds or edits your birthday in the database",
@@ -21,7 +21,7 @@ module.exports = async function initalizeCommands(client) {
             ],
         }
     });
-    client.api.applications(client.user.id).guilds(guildID).commands.post({
+    client.api.applications(client.user.id).commands.post({
         data: {
             name: "configure",
             description: "Settings to configure the bot, only usable to those with the manage server permission",

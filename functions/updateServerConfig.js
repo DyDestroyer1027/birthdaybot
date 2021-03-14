@@ -2,14 +2,7 @@ const { Database } = require('sqlite3');
 const sqlite3 = require('sqlite3').verbose();
 const newServer = require('./newServer')
 const { Permissions } = require('discord.js');
-/*let db = new sqlite3.Database('./databases/serverConfig.db', (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log('Connected to the server config database.');
-});
-db.run(`DELETE FROM serverconfig WHERE rowid < 10`)*/
-module.exports = function updateServerConfig(interaction, client) {
+module.exports = function updateServerConfig(interaction, client, logger) {
     let db = new sqlite3.Database('./databases/serverConfig.db', (err) => {
         if (err) {
           console.error(err.message);
@@ -31,9 +24,9 @@ module.exports = function updateServerConfig(interaction, client) {
                 console.log('server config already exists, updating database')
                 db.run(`UPDATE serverconfig SET output_channel_id = ${output_channel_id} WHERE server_id = ${server_id}`, function(err) {
                   if (err) {
-                    return console.error(err.message);
+                    return logger.error(err.message);
                   }
-                  //console.log(`Database updated: ${this.changes}`);
+                  logger.info(`The server configuration for ${server_id} has been updated to make ${output_channel_id} the birthday channel`)
                 });
                 client.api.interactions(interaction.id, interaction.token).callback.post({
                   data: {
@@ -45,19 +38,19 @@ module.exports = function updateServerConfig(interaction, client) {
               });
               db.close((err) => {
                   if (err) {
-                    console.error(err.message);
+                    logger.error(err.message);
                   }
-                  console.log('Closed the database connection. Source updateServerConfig.js - update is complete');
+                  logger.info(`Disconnected from the server configuration database. Source: configuration in updateServerConfig.js has finished`)
               });
             }
             else {
                 console.log('Server not here')
-                newServer(interaction, client)
+                newServer(interaction, client, logger)
                 db.close((err) => {
                     if (err) {
-                      console.error(err.message);
+                      logger.error(err.message);
                     }
-                    console.log('Closed the database connection. Source updateServerConfig.js - new server');
+                    logger.info(`Disconnected from the server configuration database. Source: configuration in updateServerConfig.js has moved onto newServer`)
                 });
             }
         });
