@@ -1,6 +1,13 @@
 const { Database } = require('sqlite3');
 const sqlite3 = require('sqlite3').verbose();
 const newServer = require('./newServer')
+/*let db = new sqlite3.Database('./databases/serverConfig.db', (err) => {
+  if (err) {
+    console.error(err.message);
+  }
+  console.log('Connected to the server config database.');
+});
+db.run(`DELETE FROM serverconfig WHERE rowid < 10`)*/
 module.exports = function updateServerConfig(interaction, client) {
     let db = new sqlite3.Database('./databases/serverConfig.db', (err) => {
         if (err) {
@@ -11,20 +18,20 @@ module.exports = function updateServerConfig(interaction, client) {
     //console.log(interaction)
     var server_id = interaction.guild_id
     var output_channel_id = interaction.data.options[0].value
-    console.log(`Server ID: ${server_id}\nOutput channel ID: ${output_channel_id}`)
+    //console.log(`Server ID: ${server_id}\nOutput channel ID: ${output_channel_id}`)
     db.serialize(() => {
         db.all(`SELECT server_id, output_channel_id, rowid FROM serverconfig WHERE server_id = ${server_id}`, [], (err, rows) => {
             if (err) {
               throw err;
             }
-            console.log(rows)
+            //console.log(rows)
             if(rows.length != 0) {
                 console.log('server config already exists, updating database')
                 db.run(`UPDATE serverconfig SET output_channel_id = ${output_channel_id} WHERE server_id = ${server_id}`, function(err) {
                   if (err) {
                     return console.error(err.message);
                   }
-                  console.log(`Database updated: ${this.changes}`);
+                  //console.log(`Database updated: ${this.changes}`);
                 });
                 client.api.interactions(interaction.id, interaction.token).callback.post({
                   data: {
@@ -43,7 +50,7 @@ module.exports = function updateServerConfig(interaction, client) {
               });
             }
             else {
-                console.log('not here')
+                console.log('Server not here')
                 newServer(interaction, client)
                 db.close((err) => {
                     if (err) {

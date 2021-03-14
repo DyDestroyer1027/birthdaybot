@@ -4,28 +4,34 @@ const client = new discord.Client();
 const config = require('./config.json');
 const initalizeCommands = require('./functions/initalizeCommands');
 const addOrUpdate = require('./functions/addOrUpdateBirthday')
-const updateServerConfig = require('./functions/updateServerConfig')
+const updateServerConfig = require('./functions/updateServerConfig');
+const addOrUpdateBirthday = require('./functions/addOrUpdateBirthday');
+const checkBirthdays = require('./functions/checkBirthdays');
 
 
 
 
 client.on('ready', () => {
     console.log('client is ready')
-    initalizeCommands(client)
+    //initalizeCommands(client)
+    checkBirthdays(client)
 
+    //Timing setup
     client.ws.on('INTERACTION_CREATE', async interaction => {
         const command = interaction.data.name.toLowerCase();
         const args = interaction.data.options;
         const user = `${interaction.member.user.username}#${interaction.member.user.discriminator}`
-        //console.log(interaction.data)
         try {
             if(command === 'configure') {
                 updateServerConfig(interaction, client)
             }
-        } catch (error) {
-	         //logger.error(error);
-	         console.log(error);
-}
+            else if(command === 'addedit') {
+                addOrUpdate(interaction, client)
+            }
+        } 
+        catch (error) {
+	        console.log(error);
+        }
 
     });
 });
